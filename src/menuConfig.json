@@ -1,0 +1,34 @@
+[
+    {
+        "href": "#/", 
+        "word": "主页", 
+        "icon": "home",
+        "title": "主页"
+    }, 
+    {
+        "href": "order", 
+        "word": "订单中心", 
+        "icon": "user", 
+        "children": [
+            {
+                "href": "#/order/list", 
+                "word": "订单列表", 
+                "icon": "user", 
+                "title": "订单列表"
+            }
+        ]
+    }, 
+    {
+        "href": "shop", 
+        "word": "店铺运营", 
+        "icon": "user", 
+        "children": [
+            {
+                "href": "#/shop/brand", 
+                "word": "制造商", 
+                "icon": "user", 
+                "title": "制造商"
+            }
+        ]
+    }
+]
