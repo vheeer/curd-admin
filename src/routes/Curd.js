@@ -6,9 +6,10 @@ import DataTable from '../components/DataTable';
 export default model => connect(
 	//纯函数
 	function(x) {
+		console.log("x", x);
 		let obj = {};
 			obj[model] = x[model];
-		return obj
+		return obj;
 	}
 )(
 	class extends React.Component {

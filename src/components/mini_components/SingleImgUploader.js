@@ -26,7 +26,7 @@ export default class SingleImgUploader extends React.Component {
   }
   handleChange(data) {
     const { fileList } = data;
-    if(fileList.length > 0 && fileList[0].status === "done"){
+    if(fileList && fileList.length > 0 && fileList[0].status === "done"){
       message.success("成功上传");
     }
     this.setState({ fileList });
@@ -49,7 +49,7 @@ export default class SingleImgUploader extends React.Component {
           onChange={this.handleChange}
           onRemove={this.handleRemove}
         >
-          {fileList.length >= 1 ? null : uploadButton}
+          {(fileList && fileList.length) >= 1 ? null : uploadButton}
         </Upload>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt={this.props.name} style={{ width: '100%' }} src={previewImage} />

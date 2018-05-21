@@ -9,7 +9,10 @@
 	width: 120px;
 }
 .create {
-	float: right;
+    float: right;
+}
+.column {
+    float: right;
 }
 .key {
 	float: left;

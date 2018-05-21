@@ -12,7 +12,8 @@ export default class DataTable extends React.Component {
 		this.state = {
 			...props,
 			key: '__none',
-			value: ''
+			value: '',
+			is_column: false
 		}
 		this.handleClickEdit = this.handleClickEdit.bind(this);
 		this.handleClickDelete = this.handleClickDelete.bind(this);
@@ -23,6 +24,8 @@ export default class DataTable extends React.Component {
 		this.inputHandleChange = this.inputHandleChange.bind(this);
 		this.handleInputClick = this.handleInputClick.bind(this);
 		this.pageSizeHandleChange = this.pageSizeHandleChange.bind(this);
+		this.switchData = this.switchData.bind(this);
+		this.switchColumn = this.switchColumn.bind(this);
 	}
 	static propTypes = {
 		columnMatch: PropTypes.object.isRequired,
@@ -37,18 +40,12 @@ export default class DataTable extends React.Component {
 			type: model + '/deleteData',
 			id
 		});
-		dispatch({
-			type: model + '/readData'
-		});
 	}
 	handleClickCreate(e) {
 		const { dispatch, model } = this.props;
 		dispatch({
 			type: model + '/createData',
 			order_sn: parseInt(Math.random() * 1000000, 10)
-		});
-		dispatch({
-			type: model + '/readData'
 		});
 	}
 	handleSwitchchange(e, record, key, data) {
@@ -77,6 +74,20 @@ export default class DataTable extends React.Component {
 		const { value } = e.target;
 		this.setState({
 			value
+		});
+	}
+	switchData(e) {
+		this.setState({
+			is_column: false
+		});
+	}
+	switchColumn(e) {
+		const { dispatch, model } = this.props;
+		this.setState({
+			is_column: true
+		});
+		dispatch({
+			type: model + '/readColumn'
 		});
 	}
 	handleInputClick() {
@@ -125,49 +136,67 @@ export default class DataTable extends React.Component {
 	}
 	render() {
 		const _that = this;
-		const { dataList, columnMatch, dispatch, count, loading, model, order_status, pay_status, totalWidth, actionWidth, alertMessage, currentPage: page } = this.props;
-		const { pageSize, key, value } = this.state;
+		const { dataList, columnMatch, dispatch, count, loading, model, order_status, pay_status, totalWidth, actionWidth, alertMessage, currentPage: page, column_dataList } = this.props;
+		const { pageSize, key, value, is_column } = this.state;
     	console.log("props of DataTable: ", this.props);
-    	console.log("columnMatch: ", columnMatch);
 
+    	/* 详细数据 */
     	//查询到的字段列表
     	let keys = [];
-    	if(dataList.length !== 0)
+    	if(dataList && dataList.length !== 0)
     		keys = Object.keys(dataList[0]);
-
 		//表头
 		const columns = [];
 		for(const key of keys)
 		{
 			//字段对应表中没有有相应的字段
-			if(typeof columnMatch[key] === "undefined")
+			if(typeof columnMatch[key] === "undefined" && 0)
 			{
 				if(key.indexOf("avatar") > -1){
-					columnMatch[key] = ["头像", true, 'varchar', true, {width: 60,fixed: 'left'}, "avatar", false]
-				}
-				if(key.indexOf("add_time") > -1){
-					columnMatch[key] = ["下单时间", true, 'varchar', false, {width: 180}, "date_time", false]
-				}
-				if(key.indexOf("swtich") > -1){
-					columnMatch[key] = ["是否显示", true, 'varchar', false, {width: 150}, "switch", false]
-				}
+		          columnMatch[key] = ["头像", true, 'varchar', true, {width: 60,fixed: 'left'}, "avatar", false];
+		        }
+		        else if(key.indexOf("add_time") > -1){
+		          columnMatch[key] = ["下单时间", true, 'varchar', false, {width: 180}, "date_time", false];
+		        }
+		        else if(key.indexOf("swtich") > -1){
+		          columnMatch[key] = ["是否显示", true, 'varchar', false, {width: 150}, "switch", false];
+		        }
+		        else if(key.indexOf("_url") > -1){
+		          columnMatch[key] = ["图片", true, 'image', false, {width: 150}, "image", false];
+		        }
+		        else{
+		          columnMatch[key] = ["字段", true, 'varchar', true, {width: 150}, "varchar", false];
+		        }
 			}
 			//字段对应表中有相应的字段,且显示
 			if(columnMatch[key][1] === true)
 			{
-				switch(columnMatch[key][5])
+				switch(columnMatch[key][2])
 				{
 					case 'varchar':
 						columns.push({
-							...columnMatch[key][4],
+							...columnMatch[key][5],
 							title: columnMatch[key][0],
 							dataIndex: key,
 							key
 						});
 						break;
+					case 'gender':
+						columns.push({
+							...columnMatch[key][5],
+							title: columnMatch[key][0],
+							dataIndex: key,
+							key,
+							render: (data, record) => {
+								return (
+									<span>{data?"男":"女"}</span>
+								)
+							}
+						});
+						break;
 					case 'switch':
 						columns.push({
-							...columnMatch[key][4],
+							...columnMatch[key][5],
 							title: columnMatch[key][0],
 							dataIndex: key,
 							key,
@@ -187,7 +216,7 @@ export default class DataTable extends React.Component {
 						break;
 					case 'avatar':
 						columns.push({
-							...columnMatch[key][4],
+							...columnMatch[key][5],
 							title: columnMatch[key][0],
 							dataIndex: key,
 							key,
@@ -207,7 +236,7 @@ export default class DataTable extends React.Component {
 						break;
 					case 'image':
 						columns.push({
-							...columnMatch[key][4],
+							...columnMatch[key][5],
 							title: columnMatch[key][0],
 							dataIndex: key,
 							key,
@@ -226,7 +255,7 @@ export default class DataTable extends React.Component {
 						break;
 					case 'order_status':
 						columns.push({
-							...columnMatch[key][4],
+							...columnMatch[key][5],
 							title: columnMatch[key][0],
 							dataIndex: key,
 							key,
@@ -240,7 +269,7 @@ export default class DataTable extends React.Component {
 						break;
 					case 'pay_status':
 						columns.push({
-							...columnMatch[key][4],
+							...columnMatch[key][5],
 							title: columnMatch[key][0],
 							dataIndex: key,
 							key,
@@ -254,7 +283,7 @@ export default class DataTable extends React.Component {
 						break;
 					case 'date_time':
 						columns.push({
-							...columnMatch[key][4],
+							...columnMatch[key][5],
 							title: columnMatch[key][0],
 							dataIndex: key,
 							key,
@@ -318,6 +347,9 @@ export default class DataTable extends React.Component {
 		let holder = "";
 		if(columnMatch[key])
 			holder = "请输入" + columnMatch[key][0];
+
+		/* 字段管理 */
+		const column_columns = null;
 		return (
 			<div>
 				<Alert className={styles.alert} message={alertMessage} type="info" />
@@ -335,32 +367,47 @@ export default class DataTable extends React.Component {
 				    	<Option value={100}>100</Option>
 				    </Select>
 				    <Button className={styles.search} type="primary" onClick={this.handleInputClick}>查询</Button>
-				    <Button className={styles.create} type="primary" onClick={this.handleClickCreate}><Icon type="plus"></Icon>添加</Button>
+			    	<Button className={styles.create} type="primary" onClick={this.handleClickCreate}><Icon type="plus"></Icon>添加</Button>
+				    <Button.Group size="middle">
+				    	<Button className={""} type={is_column?"primary":""} onClick={this.switchColumn}><Icon type="database" />字段管理</Button>
+				    	<Button className={""} type={is_column?"":"primary"} onClick={this.switchData}>详细数据<Icon type="database" /></Button>
+			        </Button.Group>
 			    </Row>
 
 
 				<Spin spinning={loading}>
-					<Table 
-						rowClassName={styles.row}
-						scroll={{ x: totalWidth + actionWidth }}
-						columns={columns} 
-						dataSource={dataList} 
-						pagination={{
-							total: count,
-							pageSize,
-							current: page,
-							onChange: (page, pageSize) => {
-								dispatch({
-									type: model + '/readData',
-							        page,
-							        pageSize,
-							        key: key === "__none"?undefined:key,
-							        value: value === ""?undefined:value
-								})
-							}
-						}}
-						rowKey={ record => record.id }
-					/>
+					{
+						is_column
+						?
+						<Table 
+							rowClassName={styles.row}
+							columns={column_columns}
+							dataSource={column_dataList}
+							rowKey={ record => record.id }
+						/>
+						:
+						<Table 
+							rowClassName={styles.row}
+							scroll={{ x: totalWidth + actionWidth }}
+							columns={columns} 
+							dataSource={dataList} 
+							pagination={{
+								total: count,
+								pageSize,
+								current: page,
+								onChange: (page, pageSize) => {
+									dispatch({
+										type: model + '/readData',
+								        page,
+								        pageSize,
+								        key: key === "__none"?undefined:key,
+								        value: value === ""?undefined:value
+									})
+								}
+							}}
+							rowKey={ record => record.id }
+						/>
+					}
 				</Spin>
 			</div>
 		)

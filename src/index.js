@@ -20,8 +20,11 @@ const app = dva({
 app.model(require('./models/page').default);
 app.model(require('./models/account').default);
 
-app.model(require('./models/order').default);
-app.model(require('./models/brand').default);
+app.model(require('./models/goods').default);
+app.model(require('./models/product').default);
+app.model(require('./models/product_comment').default);
+app.model(require('./models/product_up').default);
+app.model(require('./models/user').default);
 
 // 4. Router
 app.router(require('./router').default);

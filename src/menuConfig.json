@@ -6,28 +6,58 @@
         "title": "主页"
     }, 
     {
-        "href": "order", 
-        "word": "订单中心", 
+        "href": "goods", 
+        "word": "商品管理", 
         "icon": "user", 
         "children": [
             {
-                "href": "#/order/list", 
-                "word": "订单列表", 
+                "href": "#/goods/list", 
+                "word": "商品列表", 
                 "icon": "user", 
-                "title": "订单列表"
+                "title": "商品列表",
+                "model": "goods"
+            }
+        ]
+    },
+    {
+        "href": "product", 
+        "word": "运营", 
+        "icon": "user", 
+        "children": [
+            {
+                "href": "#/product/list", 
+                "word": "已售产品", 
+                "icon": "user", 
+                "title": "已售产品",
+                "model": "product"
+            },
+            {
+                "href": "#/product/comment", 
+                "word": "评论列表", 
+                "icon": "user", 
+                "title": "评论列表",
+                "model": "product_comment"
+            },
+            {
+                "href": "#/product/up", 
+                "word": "点赞列表", 
+                "icon": "user", 
+                "title": "点赞列表",
+                "model": "product_up"
             }
         ]
     }, 
     {
-        "href": "shop", 
-        "word": "店铺运营", 
+        "href": "user", 
+        "word": "用户管理", 
         "icon": "user", 
         "children": [
             {
-                "href": "#/shop/brand", 
-                "word": "制造商", 
+                "href": "#/user/list", 
+                "word": "用户列表", 
                 "icon": "user", 
-                "title": "制造商"
+                "title": "用户列表",
+                "model": "user"
             }
         ]
     }
